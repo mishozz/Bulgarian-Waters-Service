@@ -20,7 +20,7 @@ const typeDefs = gql`
     type: WaterFeatureType!
     location: Coordinates
     locatedIn: String
-    height: Float
+    width: Float
     length: Float
     surfaceArea: Float
     capacity: Float

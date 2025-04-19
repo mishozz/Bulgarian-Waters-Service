@@ -56,7 +56,7 @@ class SparqlClient {
             name: '?name',
             surfaceArea: '?surfaceArea',
             capacity: '?capacity',
-            height: '?height',
+            width: '?width',
             length: '?length'
         };
 
@@ -106,7 +106,7 @@ class SparqlClient {
         const query = `
             SELECT DISTINCT ?itemLabel (SAMPLE(?item) AS ?item) (SAMPLE(?typeId) AS ?typeId) 
                             (SAMPLE(?typeLabel) AS ?typeLabel) (SAMPLE(?coord) AS ?coord) 
-                            (SAMPLE(?locatedInLabel) AS ?locatedInLabel) (SAMPLE(?height) AS ?height) 
+                            (SAMPLE(?locatedInLabel) AS ?locatedInLabel) (SAMPLE(?width) AS ?width) 
                             (SAMPLE(?length) AS ?length) (SAMPLE(?surfaceArea) AS ?surfaceArea) 
                             (SAMPLE(?capacity) AS ?capacity) (SAMPLE(?inception) AS ?inception) 
                             (SAMPLE(?description) AS ?description)
@@ -135,18 +135,21 @@ class SparqlClient {
                     ?locatedIn rdfs:label ?locatedInLabel.
                     FILTER(LANG(?locatedInLabel) = "en")
                 }
-                
-                # Height
-                OPTIONAL { ?item wdt:P2048 ?height. }
+
+                # Vertical depth
+                OPTIONAL { ?item wdt:P4511 ?depth. }
                 
                 # Length
                 OPTIONAL { ?item wdt:P2043 ?length. }
+
+                # Width
+                OPTIONAL { ?item wdt:P2049 ?width. }
                 
                 # Surface area
                 OPTIONAL { ?item wdt:P2046 ?surfaceArea. }
                 
                 # Capacity
-                OPTIONAL { ?item wdt:P1157 ?capacity. }
+                OPTIONAL { ?item wdt:P2234 ?capacity. }
                 
                 # Inception date
                 OPTIONAL { ?item wdt:P571 ?inception. }
@@ -214,7 +217,7 @@ class SparqlClient {
             type,
             location: latitude && longitude ? { latitude, longitude } : null,
             locatedIn: binding.locatedInLabel ? binding.locatedInLabel.value : null,
-            height: binding.height ? parseFloat(binding.height.value) : null,
+            width: binding.width ? parseFloat(binding.width.value) : null,
             length: binding.length ? parseFloat(binding.length.value) : null,
             surfaceArea: binding.surfaceArea ? parseFloat(binding.surfaceArea.value) : null,
             capacity: binding.capacity ? parseFloat(binding.capacity.value) : null,
@@ -233,7 +236,7 @@ class SparqlClient {
     buildWaterFeatureByIdQuery(id) {
         return `
         SELECT ?item ?itemLabel ?typeId ?typeLabel ?coord ?locatedInLabel 
-                ?height ?length ?surfaceArea ?capacity ?inception ?description
+                ?width ?length ?surfaceArea ?capacity ?inception ?description
         WHERE {
             BIND(wd:${id} AS ?item)
             
@@ -256,8 +259,8 @@ class SparqlClient {
             FILTER(LANG(?locatedInLabel) = "en")
             }
             
-            # Height
-            OPTIONAL { ?item wdt:P2048 ?height. }
+            # width
+            OPTIONAL { ?item wdt:P2048 ?width. }
             
             # Length
             OPTIONAL { ?item wdt:P2043 ?length. }
