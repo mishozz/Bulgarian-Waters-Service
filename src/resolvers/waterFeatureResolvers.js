@@ -5,15 +5,32 @@ const waterFeatureResolvers = {
   Query: {
     waterFeatures: async (_, args) => {
       try {
-        // Build SPARQL query based on GraphQL parameters
-        const sparqlQuery = sparqlClient.buildWaterFeaturesQuery(args);
-        // Log the generated SPARQL query for debugging
-        console.log('Generated SPARQL Query:', sparqlQuery);
+        // If we have a specific type and no other filters, try to use cached data
+        if (args.type && !args.region && !args.minCapacity && !args.minSurfaceArea) {
+          // Get from type-specific cache
+          let features = await sparqlClient.getAllFeaturesOfType(args.type);
+          
+          // Apply sorting and pagination in memory
+          if (args.sortBy) {
+            features.sort((a, b) => {
+              const aValue = a[args.sortBy] || 0;
+              const bValue = b[args.sortBy] || 0;
+              return args.sortOrder === 'DESC' ? bValue - aValue : aValue - bValue;
+            });
+          }
+          
+          // Apply limit and offset
+          const offset = args.offset || 0;
+          const limit = args.limit || 100;
+          features = features.slice(offset, offset + limit);
+          
+          return features;
+        }
         
-        // Execute query
+        // For more complex queries, build SPARQL and check query cache
+        const sparqlQuery = sparqlClient.buildWaterFeaturesQuery(args);
         const results = await sparqlClient.query(sparqlQuery);
         
-        // Transform results to match GraphQL schema
         return sparqlClient.transformResults(results);
       } catch (error) {
         console.error('Error fetching water features:', error);
@@ -23,11 +40,7 @@ const waterFeatureResolvers = {
     
     waterFeature: async (_, { id }) => {
       try {
-        const sparqlQuery = sparqlClient.buildWaterFeatureByIdQuery(id);
-        const results = await sparqlClient.query(sparqlQuery);
-        const transformedResults = sparqlClient.transformResults(results);
-        
-        return transformedResults.length > 0 ? transformedResults[0] : null;
+        return await sparqlClient.getWaterFeatureById(id);
       } catch (error) {
         console.error(`Error fetching water feature with ID ${id}:`, error);
         throw new Error(`Failed to fetch water feature ${id} from Wikidata`);
