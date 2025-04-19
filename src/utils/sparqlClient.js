@@ -157,7 +157,7 @@ class SparqlClient {
         let capacityFilter = '';
         if (minCapacity) {
             capacityFilter = `
-                ?item wdt:P1157 ?capacity.
+                ?item wdt:P2234 ?capacity.
                 FILTER(?capacity >= ${minCapacity}).
             `;
         }
@@ -340,7 +340,7 @@ class SparqlClient {
             OPTIONAL { ?item wdt:P2046 ?surfaceArea. }
             
             # Capacity
-            OPTIONAL { ?item wdt:P1157 ?capacity. }
+            OPTIONAL { ?item wdt:P2234 ?capacity. }
             
             # Inception date
             OPTIONAL { ?item wdt:P571 ?inception. }
