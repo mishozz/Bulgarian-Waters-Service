@@ -5,7 +5,7 @@ The Bulgarian-Waters-Service is a GraphQL API that provides detailed information
 ## Features
 
 - **GraphQL API**: Query water features by type, region, capacity, surface area, and more.
-- **Caching**: Implements caching for improved performance and reduced load on the SPARQL endpoint.
+- **Caching**: Implements caching for improved performance and reduced load on the GraphQL endpoint.
 - **Preloading**: Preloads water feature data into the cache for faster queries.
 - **Sorting and Pagination**: Supports sorting and paginating results.
 
